@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,7 +18,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createUserDto: CreateUserDto): number {
     return this.userService.create(createUserDto);
   }
 
@@ -26,9 +27,9 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  @Get(':id') //con el parseIntPipe hacemos que nest maneje la exepcion ya que parseara el str a numb
+  findOne(@Param('id', ParseIntPipe) id: number): User {
+    return this.userService.findOne(id);
   }
 
   @Patch(':id')
