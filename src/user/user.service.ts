@@ -10,12 +10,11 @@ import { User } from './entities/user.entity';
 @Injectable()
 export class UserService {
   private users: User[] = [
-    { id: 1, name: 'mx', lastname: 'mx', age: 10 },
-    { id: 2, name: 'jav', lastname: 'jav', age: 20 },
+    { id: 1, name: 'mx', lastname: 'mx', age: 10, active: true },
+    { id: 2, name: 'jav', lastname: 'jav', age: 20, active: false },
   ];
 
   create(createUserDto: CreateUserDto): number {
-    console.log(createUserDto);
     let user = new User();
     user = createUserDto;
     if (!user)
@@ -38,10 +37,24 @@ export class UserService {
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    const { lastname, active } = updateUserDto;
+    //llamo a la funcion para econtrar el usuario
+    const user = this.findOne(id);
+    //aqui indico que si active y lastname son distinto de undefined que tomen el valor de las columnas señaladas.
+    if (lastname !== undefined) user.lastname = lastname;
+    if (active !== undefined) user.active = active;
+    //aqui mapeamos para alterar lo que se tiene en la bda o en el storage
+    this.users = this.users.map((dbUser) => {
+      if (dbUser.id === id) return user;
+      return dbUser;
+    });
+    return `Update correct the #${id} user`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  remove(id: number): string {
+    this.findOne(id);
+    //aqui indicamos que el array de User sera el cual no tenga el objeto con el id señalado
+    this.users = this.users.filter((user) => user.id !== id);
+    return `Removes the #${id} user was succed`;
   }
 }
