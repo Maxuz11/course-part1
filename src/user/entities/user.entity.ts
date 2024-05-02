@@ -3,5 +3,5 @@ export class User {
   name: string;
   lastname: string;
   age: number;
-  active: boolean;
+  active: boolean = true;
 }
